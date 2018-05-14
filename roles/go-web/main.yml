@@ -1,0 +1,38 @@
+---
+- name: install epel repository
+  yum:
+    name: epel-release
+    state: latest
+
+- name: install golang
+  yum:
+    name: golang
+    state: installed
+
+- name: add environment variables in bashrc
+  blockinfile:
+    block: |
+        export GOPATH=/usr/bin/go
+        export PATH=$PATH:$GOPATH/bin
+    path: /home/admin/.bashrc
+    insertafter: EOF
+    owner: admin
+    group: admin
+    mode: '0644'
+
+- name: create deployment directory
+  file:
+    path: /home/admin/release
+    owner: admin
+    group: admin
+    mode: '0755'
+    recurse: yes
+
+- name: copy files from s3 to server
+  get_url:
+    url: https://s3.amazonaws.com/ops-hiring-webserver/gowebserver
+    dest: /home/admin/release/
+    mode: '0755'
+
+- name: deploy
+  shell: cd /home/admin/release/; nohup ./gowebserver </dev/null >/dev/null 2>&1 &
