@@ -1,13 +1,9 @@
 ---
 - name: install epel repository
   yum:
-    name: epel-release
+    name: "{{ item }}"
     state: latest
-
-- name: install golang
-  yum:
-    name: golang
-    state: installed
+  with_items: "{{ packages }}"
 
 - name: add environment variables in bashrc
   blockinfile:

@@ -1,0 +1,20 @@
+---
+aws_region: us-east-1
+
+# EC2 parameters
+ec2_image_id: ami-a2f663dd
+ec2_instance_type: t2.nano
+ec2_pem_key: mobiquity-app
+ec2_count: 1
+ec2_security_grpid:  sg-4f15c807
+ec2_subnet_id: subnet-3e77f074
+
+# ELB parameters
+ec2_vpc_id: vpc-5781a32c
+web_elb_name: elb-goweb
+elb_zone: us-east-1d
+
+# deployment
+packages:
+    - epel-release
+    - golang

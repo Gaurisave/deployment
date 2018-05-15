@@ -1,0 +1,29 @@
+---
+- name: setup a simple load balancer
+  ec2_elb_lb:
+        name: "{{ web_elb_name }}"
+        state: present
+        region: "{{ aws_region }}"
+        aws_access_key: "{{ lookup('env', 'aws_access_key') }}"
+        aws_secret_key: "{{ lookup('env', 'aws_secret_key') }}"
+        zones:
+          - "{{ elb_zone }}"
+        listeners:
+          - protocol: http
+            load_balancer_port: 80
+            instance_port: 7777
+  register: ec2_elb_lb_launched
+
+- name: add the webservers to the load balancer
+  ec2_elb:
+        instance_id: "{{ item.id }}"
+        ec2_elbs: "{{ web_elb_name }}"
+        region: "{{ aws_region }}"
+        aws_access_key: "{{ lookup('env', 'aws_access_key') }}"
+        aws_secret_key: "{{ lookup('env', 'aws_secret_key') }}"
+        state: present
+  with_items: "{{ ec2_provisioned.instances }}"
+
+
+- debug:
+        msg: " Check URL: {{ ec2_elb_lb_launched.dns_name }} "

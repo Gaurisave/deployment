@@ -1,10 +1,24 @@
 ---
+# provision EC2
 - hosts: localhost
   become: yes
   vars_files:
     - vars/main.yml
-
   roles:
     - ec2-provisioning
-    - elb-provisioning
+
+# Deploy go app on provisioned ec2
+- hosts: ec2_launched
+  become: yes
+  vars_files:
+    - vars/main.yml
+  roles:
     - go-web
+
+# add classic load baancer for port forwarding
+- hosts: localhost
+  become: yes
+  vars_files:
+    - vars/main.yml
+  roles:
+    - elb-provisioning

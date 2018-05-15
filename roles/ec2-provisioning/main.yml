@@ -1,0 +1,42 @@
+---
+- debug:
+    msg: "started ec2 provisiong"
+- name: Provision ec2 instance
+  local_action:
+    module: ec2
+    image: "{{ ec2_image_id }}"
+    instance_type: "{{ ec2_instance_type }}"
+    key_name: "{{ ec2_pem_key }}"
+    count: "{{ ec2_count }}"
+    vpc_subnet_id: "{{ ec2_subnet_id }}"
+    group_id: "{{ ec2_security_grpid }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ lookup('env', 'aws_access_key') }}"
+    aws_secret_key: "{{ lookup('env', 'aws_secret_key') }}"
+    wait: true
+  register: ec2_provisioned
+
+- name: Add new instance to host group
+  add_host:
+    hostname: "{{ item.public_ip }}"
+    groupname: ec2_launched
+  with_items: "{{ ec2_provisioned.instances }}"
+
+- name: Wait for SSH to come up
+  wait_for:
+    host: "{{ item.public_dns_name }}"
+    port: 22
+    delay: 60
+    timeout: 320
+    state: started
+  with_items: "{{ ec2_provisioned.instances }}"
+
+- name: add entry in known hosts
+  lineinfile:
+    path: /home/admin/.ssh/known_hosts
+    line: '{{ item.public_ip }} {{ ssh_key }}'
+    insertafter: EOF
+    owner: admin
+    group: admin
+    mode: '0644'
+  with_items: "{{ ec2_provisioned.instances }}"
