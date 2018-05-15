@@ -1,6 +1,4 @@
 ---
-- debug:
-    msg: "started ec2 provisiong"
 - name: Provision ec2 instance
   local_action:
     module: ec2
