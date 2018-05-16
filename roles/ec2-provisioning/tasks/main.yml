@@ -32,7 +32,7 @@
 - name: add entry in known hosts
   lineinfile:
     path: /home/admin/.ssh/known_hosts
-    line: '{{ item.public_ip }} {{ ssh_key }}'
+    line: "{{ item.public_ip }} {{ lookup('env', 'ssh_known_host_key') }} "
     insertafter: EOF
     owner: admin
     group: admin
