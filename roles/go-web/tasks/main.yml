@@ -1,5 +1,5 @@
 ---
-- name: install epel repository
+- name: install packages
   yum:
     name: "{{ item }}"
     state: latest
