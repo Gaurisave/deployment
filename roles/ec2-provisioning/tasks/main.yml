@@ -1,7 +1,5 @@
 ---
 - name: Provision ec2 instance
-#  local_action:
-#    module: ec2
   ec2:
     image: "{{ ec2_image_id }}"
     instance_type: "{{ ec2_instance_type }}"
