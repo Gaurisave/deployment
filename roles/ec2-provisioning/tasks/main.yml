@@ -1,16 +1,19 @@
 ---
 - name: Provision ec2 instance
-  local_action:
-    module: ec2
+#  local_action:
+#    module: ec2
+  ec2:
     image: "{{ ec2_image_id }}"
     instance_type: "{{ ec2_instance_type }}"
     key_name: "{{ ec2_pem_key }}"
     count: "{{ ec2_count }}"
     vpc_subnet_id: "{{ ec2_subnet_id }}"
-    group_id: "{{ ec2_security_grpid }}"
+    group_id: "{{ mobiquity_web_SG.group_id }}"
     region: "{{ aws_region }}"
     aws_access_key: "{{ lookup('env', 'aws_access_key') }}"
     aws_secret_key: "{{ lookup('env', 'aws_secret_key') }}"
+    instance_tags:
+      app: mobiquity_web
     wait: true
   register: ec2_provisioned
 

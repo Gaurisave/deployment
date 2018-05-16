@@ -1,10 +1,11 @@
 ---
-# provision EC2
+# provision EC2 and security group
 - hosts: localhost
   become: yes
   vars_files:
     - vars/main.yml
   roles:
+    - ec2-sg-provisioning
     - ec2-provisioning
 
 # Deploy go app on provisioned ec2
